@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Pagina nu există{% endblock %}
+{% block content %}
+<section class="not-found">
+  <h1>404 — Pagina nu există</h1>
+  <p>Spectacolul sau pagina căutată nu se află în baza de date.</p>
+  <p><a href="{{ url_for('shows') }}">Vezi lista spectacolelor</a> sau <a href="{{ url_for('schedule') }}">programul</a>.</p>
+</section>
+{% endblock %}

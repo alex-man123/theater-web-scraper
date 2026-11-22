@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_macros.html" import show_card with context %}
+{% block title %}Spectacole{% endblock %}
+{% block content %}
+<h1>Spectacole</h1>
+<form class="search" action="{{ url_for('shows') }}" method="get" role="search">
+  <label for="q" class="visually-hidden">Caută după titlu</label>
+  <input id="q" type="search" name="q" value="{{ q }}" placeholder="Caută după titlu…">
+  <button type="submit">Caută</button>
+  {% if q %}<a class="reset" href="{{ url_for('shows') }}">Toate spectacolele</a>{% endif %}
+</form>
+
+{% if q %}
+  <p class="result-info">{{ shows|length }} rezultat{{ 'e' if shows|length != 1 }} pentru „{{ q }}”.</p>
+{% endif %}
+
+{% if shows %}
+  <div class="show-grid">{% for s in shows %}{{ show_card(s) }}{% endfor %}</div>
+{% elif q %}
+  <p class="empty">Niciun spectacol nu are în titlu „{{ q }}”. Încercați un alt cuvânt sau
+    <a href="{{ url_for('shows') }}">vedeți toate spectacolele</a>.</p>
+{% else %}
+  <p class="empty">Nu există încă spectacole în baza de date. Rulați crawlerul.</p>
+{% endif %}
+{% endblock %}

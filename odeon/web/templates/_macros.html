@@ -1,0 +1,42 @@
+{% macro show_card(s) -%}
+<article class="show-card">
+  <a href="{{ url_for('show_detail', show_id=s.id) }}" class="poster-link">
+    <img src="{{ poster_url(s.poster_path) }}" alt="Afișul spectacolului {{ s.title }}"
+         width="240" height="340" loading="lazy">
+  </a>
+  <div class="show-card-body">
+    <h3><a href="{{ url_for('show_detail', show_id=s.id) }}">{{ s.title }}</a></h3>
+    <dl class="meta">
+      {% if s.author %}<dt>Autor</dt><dd>{{ s.author }}</dd>{% endif %}
+      {% if s.director %}<dt>Regia</dt><dd>{{ s.director }}</dd>{% endif %}
+      {% if not s.author and not s.director and s.subtitle %}<dd class="credit">{{ s.subtitle }}</dd>{% endif %}
+    </dl>
+    <p class="next">
+      {% if s.next_start_at %}
+        <span class="label">Următoarea:</span>
+        <time datetime="{{ (s.next_start_at|local).isoformat() }}">{{ s.next_start_at|ro_date }}, ora {{ s.next_start_at|ro_time }}</time>
+      {% else %}
+        <span class="muted">Nicio reprezentație programată</span>
+      {% endif %}
+    </p>
+  </div>
+</article>
+{%- endmacro %}
+
+{% macro perf_row(p, show_title=true) -%}
+<li class="perf">
+  <time class="perf-when" datetime="{{ (p.start_at|local).isoformat() }}">
+    <span class="perf-time">{{ p.start_at|ro_time }}</span>
+    <span class="perf-date">{{ p.start_at|ro_date }}</span>
+  </time>
+  <div class="perf-what">
+    {% if show_title %}
+      <a class="perf-title" href="{{ url_for('show_detail', show_id=p.show_id) }}">{{ p.show_title }}</a>
+      {% if p.source_title and p.source_title != p.show_title %}<span class="perf-sub">{{ p.source_title }}</span>{% endif %}
+    {% endif %}
+    <span class="perf-venue">{{ p.venue or p.performance_type or 'Sală nespecificată' }}</span>
+    {% if p.status in status_labels %}<span class="badge badge-{{ p.status }}">{{ status_labels[p.status] }}</span>{% endif %}
+    {% if p.notes %}<span class="perf-notes">{{ p.notes }}</span>{% endif %}
+  </div>
+</li>
+{%- endmacro %}

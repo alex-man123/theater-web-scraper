@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% from "_macros.html" import perf_row with context %}
+{% block title %}{{ show.title }}{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="{{ url_for('shows') }}">← Spectacole</a></p>
+
+<article class="show-detail">
+  <div class="show-poster">
+    <img src="{{ poster_url(show.poster_path) }}" alt="Afișul spectacolului {{ show.title }}" width="360" height="510">
+  </div>
+
+  <div class="show-info">
+    <h1>{{ show.title }}</h1>
+    {% if show.subtitle %}<p class="credit">{{ show.subtitle }}</p>{% endif %}
+
+    <dl class="facts">
+      <dt>Autor</dt><dd>{{ show.author or '—' }}</dd>
+      <dt>Regia</dt><dd>{{ show.director or '—' }}</dd>
+      <dt>Durata</dt><dd>{{ show.duration_text or '—' }}{% if show.duration_minutes %} <span class="muted">({{ show.duration_minutes }} min)</span>{% endif %}</dd>
+      <dt>Vârsta recomandată</dt><dd>{{ show.age_recommendation or '—' }}</dd>
+      {% if show.language %}<dt>Limbă / traducere</dt><dd>{{ show.language }}</dd>{% endif %}
+      {% if show.premiere_date %}<dt>Premiera</dt><dd>{{ show.premiere_date|ro_plain_date }}</dd>{% endif %}
+    </dl>
+
+    <section>
+      <h2>Reprezentații viitoare</h2>
+      {% if performances %}
+        <ul class="perf-list compact">{% for p in performances %}{{ perf_row(p, show_title=false) }}{% endfor %}</ul>
+      {% else %}
+        <p class="empty">Momentan nu există reprezentații programate pentru acest spectacol.</p>
+      {% endif %}
+    </section>
+  </div>
+</article>
+
+<div class="show-columns">
+  <section>
+    <h2>Descriere</h2>
+    {% if show.description %}
+      {% for para in show.description.split('\n\n') %}<p>{{ para }}</p>{% endfor %}
+    {% else %}
+      <p class="empty">Teatrul nu a publicat o descriere pentru acest spectacol.</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>Distribuția</h2>
+    {% if show.cast_json %}
+      <ul class="people">
+        {% for c in show.cast_json %}
+          <li>{% if c.character %}<span class="role">{{ c.character }}</span>{% endif %}<span class="name">{{ c.name }}</span></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty">Distribuția nu este disponibilă.</p>
+    {% endif %}
+
+    <h2>Echipa artistică</h2>
+    {% if show.team_json %}
+      <ul class="people">
+        {% for t in show.team_json %}
+          <li>{% if t.role %}<span class="role">{{ t.role }}</span>{% endif %}<span class="name">{{ t.name }}</span></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty">Echipa artistică nu este disponibilă.</p>
+    {% endif %}
+  </section>
+</div>
+
+<p class="source">Sursa: <a href="{{ show.source_url }}" rel="noopener">{{ show.source_url }}</a>
+  {% if show.origin == 'schedule' %}<br><span class="muted">Acest titlu apare doar în programul teatrului, fără o pagină de spectacol dedicată.</span>{% endif %}
+</p>
+{% endblock %}

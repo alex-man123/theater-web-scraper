@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "_macros.html" import perf_row with context %}
+{% block title %}Program{% endblock %}
+{% block content %}
+<h1>Program</h1>
+
+<form class="filters" method="get" action="{{ url_for('schedule') }}">
+  <label for="venue">Sala</label>
+  <select id="venue" name="venue">
+    <option value="">Toate sălile</option>
+    {% for v in venues %}<option value="{{ v }}" {% if v == venue %}selected{% endif %}>{{ v }}</option>{% endfor %}
+  </select>
+  <button type="submit">Filtrează</button>
+</form>
+
+<p class="result-info">{{ count }} reprezentați{{ 'i' if count != 1 else 'e' }} viitoare, în ordine cronologică.</p>
+
+{% if days %}
+  {% for label, perfs in days %}
+    <section class="day schedule">
+      <h2 class="day-title">{{ label }}</h2>
+      <ul class="perf-list">{% for p in perfs %}{{ perf_row(p) }}{% endfor %}</ul>
+    </section>
+  {% endfor %}
+{% else %}
+  <p class="empty">Nu există reprezentații viitoare{% if venue %} în {{ venue }}{% endif %}.</p>
+{% endif %}
+{% endblock %}

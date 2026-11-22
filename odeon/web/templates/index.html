@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from "_macros.html" import show_card, perf_row with context %}
+{% block title %}Acasă{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Teatrul Odeon — repertoriu și program</h1>
+  <p>{{ info.shows }} spectacole și {{ info.performances }} reprezentații în baza de date locală.
+    {% if info.last_crawl %}Ultima colectare: {{ info.last_crawl|ro_date(false) }}, {{ info.last_crawl|ro_time }}.{% endif %}</p>
+  <form class="search" action="{{ url_for('shows') }}" method="get" role="search">
+    <label for="q-home" class="visually-hidden">Caută după titlu</label>
+    <input id="q-home" type="search" name="q" placeholder="Caută un spectacol după titlu…">
+    <button type="submit">Caută</button>
+  </form>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Reprezentații viitoare</h2>
+    <a href="{{ url_for('schedule') }}">Tot programul →</a>
+  </div>
+  {% if upcoming %}
+    <ul class="perf-list">{% for p in upcoming %}{{ perf_row(p) }}{% endfor %}</ul>
+  {% else %}
+    <p class="empty">Nu există reprezentații viitoare în baza de date. Rulați crawlerul pentru a actualiza programul.</p>
+  {% endif %}
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Spectacole</h2>
+    <a href="{{ url_for('shows') }}">Toate cele {{ total_shows }} spectacole →</a>
+  </div>
+  {% if shows %}
+    <div class="show-grid">{% for s in shows %}{{ show_card(s) }}{% endfor %}</div>
+  {% else %}
+    <p class="empty">Nu există încă spectacole în baza de date.</p>
+  {% endif %}
+</section>
+{% endblock %}
